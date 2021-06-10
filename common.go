@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"path"
 	"strings"
 
@@ -37,11 +36,7 @@ func deduplicateDownloadItems(DownloadItems []*DownloadItem) []*DownloadItem {
 
 func updateDiscordStatus() {
 	dg.UpdateStatusComplex(discordgo.UpdateStatusData{
-		Game: &discordgo.Game{
-			Name: fmt.Sprintf("%d downloaded pictures", countDownloadedImages()),
-			Type: discordgo.GameTypeWatching,
-		},
-		Status: "online",
+		Status: "invisible",
 	})
 }
 

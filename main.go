@@ -1043,6 +1043,14 @@ func downloadFromUrl(dUrl string, filename string, path string, channelId string
 	contentTypeParts := strings.Split(contentType, "/")
 	if contentTypeParts[0] != "image" && contentTypeParts[0] != "video" {
 		fmt.Println("No image or video found at", dUrl)
+		f, err := os.OpenFile("log.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		if _, err = f.WriteString(dUrl + "\n"); err != nil {
+			panic(err)
+		}
 		return true
 	}
 
