@@ -966,6 +966,21 @@ func startDownload(dUrl string, filename string, path string, channelId string, 
 	}
 }
 
+func customLogging0(prefix string, channelID string, inputURL string, errtype string) error {
+	file, ferr := os.OpenFile(channelID+".txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if ferr != nil {
+		fmt.Println(ferr)
+		return ferr
+	}
+	_, werr := file.WriteString("[" + prefix + "] " + inputURL + " (" + errtype + ")\n")
+	if werr != nil {
+		fmt.Println(werr)
+		return werr
+	}
+	file.Close()
+	return nil
+}
+
 func downloadFromUrl(dUrl string, filename string, path string, channelId string, userId string, fileTime time.Time) bool {
 	err := os.MkdirAll(path, 755)
 	if err != nil {
@@ -1043,15 +1058,20 @@ func downloadFromUrl(dUrl string, filename string, path string, channelId string
 	contentTypeParts := strings.Split(contentType, "/")
 	if contentTypeParts[0] != "image" && contentTypeParts[0] != "video" {
 		fmt.Println("No image or video found at", dUrl)
-		f, err := os.OpenFile("log.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
-		if _, err = f.WriteString(dUrl + "\n"); err != nil {
-			panic(err)
-		}
-		return true
+
+		_ = customLogging0(time.Now().Format(time.Stamp), channelId, dUrl, "No image or video found")
+
+		/*
+			f, err := os.OpenFile("log.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			if err != nil {
+				panic(err)
+			}
+			defer f.Close()
+			if _, err = f.WriteString(dUrl + "\n"); err != nil {
+				panic(err)
+			}
+			return true
+		*/
 	}
 
 	err = ioutil.WriteFile(completePath, bodyOfResp, 0644)
